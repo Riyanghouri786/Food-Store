@@ -1,101 +1,93 @@
-import Image from "next/image";
+"use client";
+import { useState } from "react";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [balance, setBalance] = useState(100); // Default balance is $100
+  const [cartItems, setCartItems] = useState([
+    { id: 1, name: "Pepperoni Pizza", price: 12.99 },
+    { id: 2, name: "Margherita Pizza", price: 10.99 },
+    { id: 3, name: "BBQ Chicken Pizza", price: 13.99 },
+  ]); // Sample cart items
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+  const handleCheckout = () => {
+    const totalCheckoutAmount = cartItems.reduce(
+      (total, item) => total + item.price,
+      0
+    ); // Calculate total price
+    if (balance >= totalCheckoutAmount) {
+      setBalance(balance - totalCheckoutAmount); // Decrease balance by the checkout amount
+      setCartItems([]); // Clear the cart after checkout
+      alert(
+        `Checkout successful! New balance: $${(
+          balance - totalCheckoutAmount
+        ).toFixed(2)}`
+      );
+    } else {
+      alert("Insufficient balance for checkout.");
+    }
+  };
+
+  return (
+    <section className="flex flex-col items-center justify-center min-h-screen p-8 text-white bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
+      {/* Header */}
+      <h2 className="mb-4 text-5xl font-extrabold tracking-wide">
+        Welcome to 🍟Food Store
+      </h2>
+      <p className="max-w-2xl mb-10 text-xl leading-relaxed text-center">
+        Indulge in a delicious variety of pizzas. Order now and enjoy the best
+        flavors in town!
+      </p>
+
+      {/* Balance Display */}
+      <div className="w-full max-w-sm p-4 mb-10 text-center bg-white rounded-lg shadow-lg bg-opacity-20">
+        <h3 className="mb-2 text-2xl font-bold text-white">Current Balance</h3>
+        <div className="text-4xl font-extrabold">${balance.toFixed(2)}</div>
+      </div>
+
+      {/* Cart Display */}
+      <div className="w-full max-w-lg p-6 text-center bg-white rounded-lg shadow-lg bg-opacity-20">
+        <h3 className="mb-6 text-3xl font-bold">My Cart</h3>
+        {cartItems.length === 0 ? (
+          <p className="text-lg">
+            Your cart is empty. Add some delicious pizzas!
+          </p>
+        ) : (
+          <>
+            <ul className="grid grid-cols-1 gap-4 mb-6">
+              {cartItems.map((item) => (
+                <li
+                  key={item.id}
+                  className="flex justify-between px-4 py-2 text-gray-800 transition-transform transform bg-white rounded-lg shadow-md bg-opacity-80 hover:scale-105"
+                >
+                  <span>{item.name}</span>
+                  <span className="font-semibold">
+                    ${item.price.toFixed(2)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            {/* Total Price */}
+            <div className="mb-6 text-2xl font-bold">
+              Total: $
+              {cartItems
+                .reduce((total, item) => total + item.price, 0)
+                .toFixed(2)}
+            </div>
+          </>
+        )}
+        {/* Checkout Button */}
+        <button
+          onClick={handleCheckout}
+          className="w-full px-6 py-3 text-lg font-semibold text-white transition-transform transform bg-pink-600 rounded-lg shadow-md hover:scale-105 hover:bg-pink-700 focus:ring focus:ring-pink-400"
         >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+          Checkout Now
+        </button>
+      </div>
+
+      {/* Footer */}
+      <footer className="mt-16 text-sm text-center text-white opacity-70">
+        © 2024 Food Store. All rights reserved.
       </footer>
-    </div>
+    </section>
   );
 }
